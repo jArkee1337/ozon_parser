@@ -16,7 +16,7 @@ def get_chrome_driver():
     service = ChromeService(executable_path=ChromeDriverManager().install())
     options = webdriver.ChromeOptions()
     options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_argument('--headless')
+    # options.add_argument('--headless')
     options.add_argument('user-agent=Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:106.0) Gecko/20100101 Firefox/106.0')
     driver = webdriver.Chrome(service=service, options=options)
     return driver
@@ -33,7 +33,7 @@ def get_html_from_start_page(url):
         time.sleep(3)
         result = driver.page_source
         list_of_htmls.append(result)
-        if len(list_of_htmls) == 3:
+        if len(list_of_htmls) == 1:
             break
         driver.quit()
         driver = next_page_link(result)
@@ -118,9 +118,9 @@ def main():
         start = datetime.now()
         base_html = get_html_from_start_page(URL)
         all_urls = get_all_links(base_html)
-        if len(all_urls) < 100:
-            print('I could not to scrape enough links :( I am trying again')
-            continue
+        # if len(all_urls) < 100:
+        #     print('I could not to scrape enough links :( I am trying again')
+        #     continue
 
         result_list = []
         counter = 1
