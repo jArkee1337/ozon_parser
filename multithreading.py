@@ -8,17 +8,21 @@ from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import re
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor, wait
 from selenium.webdriver.common.action_chains import ActionChains
+
 URL = 'https://www.ozon.ru/category/smartfony-15502/?sorting=rating'
+result_list = []
 
 
 def get_chrome_driver():
     service = ChromeService(executable_path=ChromeDriverManager().install())
     options = webdriver.ChromeOptions()
     options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_argument('--headless')
+    # options.add_argument('--headless')
     options.add_argument('user-agent=Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:106.0) Gecko/20100101 Firefox/106.0')
     driver = webdriver.Chrome(service=service, options=options)
+
     return driver
 
 
@@ -87,6 +91,8 @@ def get_html_from_phone_page(url):
         smartphone_description_link.click()
         time.sleep(3)
         smartphone_name = driver.find_element(By.CLASS_NAME, 'vn0').text
+
+
     except:
         print('Can not find description button')
         smartphone_name = 'Nonephone'
@@ -113,26 +119,40 @@ def get_data_from_page(html):
     return os_version
 
 
-def main():
+def run_process(url, result_list_for_run=result_list):
+    phone_html = get_html_from_phone_page(url)
+    os_version = get_data_from_page(phone_html)
+    result_list_for_run.append(os_version)
+
+
+def main(result_list_main=result_list):
     while True:
         start = datetime.now()
         base_html = get_html_from_start_page(URL)
         all_urls = get_all_links(base_html)
-        if len(all_urls) < 100:
-            print('I could not to scrape enough links :( I am trying again')
-            continue
+        # if len(all_urls) < 100:
+        #     print('I could not to scrape enough links :( I am trying again')
+        #     continue
 
-        result_list = []
-        counter = 1
-        for url in all_urls:
-            print(counter)
-            phone_html = get_html_from_phone_page(url)
-            os_version = get_data_from_page(phone_html)
-            result_list.append(os_version)
-            counter += 1
+        # result_list = []
+        # counter = 1
+        futures = []
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            for url in all_urls:
+                futures.append(
+                    executor.submit(run_process, url, )
+                )
+        wait(futures)
+        # for url in all_urls:
+        #     print(counter)
+        #     run_process(url)
+        # phone_html = get_html_from_phone_page(url)
+        # os_version = get_data_from_page(phone_html)
+        # result_list.append(os_version)
+        # counter += 1
         end = datetime.now()
         working_time = end - start
-        result = Counter(result_list)
+        result = Counter(result_list_main)
         print(f'The script has worked: {working_time}')
         print(result)
         return result
