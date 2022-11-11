@@ -9,7 +9,6 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
-
 from selenium.webdriver.common.action_chains import ActionChains
 
 URL = 'https://www.ozon.ru/category/smartfony-15502/?sorting=rating'
