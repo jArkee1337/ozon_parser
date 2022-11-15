@@ -79,7 +79,7 @@ def get_all_links(html_list):
     print('Start taking all links from html_list')
     for html in html_list:
         soup = BeautifulSoup(html, 'lxml')
-        soup_divs = soup.find_all('div', class_='k4r')
+        soup_divs = soup.find_all('div', class_='kr7')
 
         for div in soup_divs:
             link_part = div.find('a', class_='tile-hover-target').get('href')
@@ -106,13 +106,13 @@ def get_html_from_phone_page(url):
         print('Some exception')
     time.sleep(2)
     try:
-        smartphone_description_link = driver.find_element(By.CLASS_NAME, 'xl2')
+        smartphone_description_link = driver.find_element(By.CLASS_NAME, 'l5x')
         action = ActionChains(driver)
         action.move_to_element(smartphone_description_link)
         time.sleep(1)
         smartphone_description_link.click()
         time.sleep(3)
-        smartphone_name = driver.find_element(By.CLASS_NAME, 'vn0').text
+        smartphone_name = driver.find_element(By.CLASS_NAME, 'n3v').text
     except Exception:
         print('Can not find description button')
         smartphone_name = 'Nonephone'
